@@ -38,7 +38,13 @@ class Gameboard extends Component {
             let iArr = []
             array.push(iArr);
             for(let j = 0; j<size; j++){
-                let temp = this.decideGem();
+                if(j !== 0){
+                    var lastLeft = array[i][j-1]
+                }
+                if(i !== 0){
+                    var lastUp = array[i-1][j]
+                }
+                let temp = this.decideGem(lastLeft, lastUp);
                 array[i].push(temp);
             }
         }
@@ -50,56 +56,9 @@ class Gameboard extends Component {
         })
     }
     initGameboard = () => {
-        this.preventMatchesOnBuild();  
+        this.renderTiles();  
     }
-    preventMatchesOnBuild = () => {
-        const {gameboardArray} = this.state;
-        for(let i = 0; i<this.boardSize; i++){
-            for(let j = 0; j<this.boardSize; j ++){
-                let dirArr = Object.keys(this.directionCheck);
-                let color = gameboardArray[i][j];
-                for(let dirI = 0; dirI < dirArr.length; dirI++){
-                    let direction = dirArr[dirI]
-                    let adjY = i + this.directionCheck[direction].y;
-                    let adjX = i + this.directionCheck[direction].x;
-                    if(this.checkOffBoard(adjY, adjX)){
-                        continue;
-                    }
-                    if(gameboardArray[adjY][adjX] === color){
-                        this.checkFurther({y: adjY, x: adjX}, [{y: i, x: j}, {y: adjY, x: adjX}], direction, 2, color)
-                    }
-                }
-            }
-        }
-        this.setState({
-            gameboardArray: this.gameboardArrayCopy
-        }, this.renderTiles())    
-    }
-    checkFurther = (toCheckCords, matchesArr, direction, count, color) => {
-        const {gameboardArray} = this.state;
-        let adjY = toCheckCords.y + this.directionCheck[direction].y;
-        let adjX = toCheckCords.x + this.directionCheck[direction].x;
-        if(this.checkOffBoard(adjY, adjX)){
-            if (count > 2){
-                for(let i = 0; i < matchesArr.length; i++){
-                    this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
-                }
-            }  
-            return;
-        }
-        if(gameboardArray[adjY][adjX] === color){
-            matchesArr.push({y: adjY, x: adjX});
-            this.checkFurther({y: adjY, x: adjX}, matchesArr, direction, ++count, color)
-        } else {
-            if (count < 3){
-                return;
-            }       
-            for(let i = 0; i < matchesArr.length; i++){
-                this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
-            }
-        }
-    }
-
+    
     checkOffBoard = (y, x) => {
         if(y < 0 || y > this.boardSize-1 || x < 0 || x > this.boardSize-1){
             return true;
@@ -107,11 +66,20 @@ class Gameboard extends Component {
         return false;
     }
 
-    decideGem = (color) => {
+    decideGem = (left, up, count) => {
         let randomNum = Math.floor(Math.random() * 7);
         let gemArray = Object.keys(this.gemColorRef);
-
-        return gemArray[randomNum];
+        let gem = gemArray[randomNum];
+        if(!count){
+            var count = 0;
+        } else {
+            count++
+        }
+        console.log(left, up, gem, count)
+        if(gem === left || gem === up){
+            gem = this.decideGem(left, up, count);
+        }
+        return gem;
     }
 
     renderTiles = () => { 
@@ -142,3 +110,52 @@ class Gameboard extends Component {
 }
 
 export default Gameboard;
+
+
+// preventMatchesOnBuild = () => {
+//     const {gameboardArray} = this.state;
+//     for(let i = 0; i<this.boardSize; i++){
+//         for(let j = 0; j<this.boardSize; j ++){
+//             let dirArr = Object.keys(this.directionCheck);
+//             let color = gameboardArray[i][j];
+//             for(let dirI = 0; dirI < dirArr.length; dirI++){
+//                 let direction = dirArr[dirI]
+//                 let adjY = i + this.directionCheck[direction].y;
+//                 let adjX = i + this.directionCheck[direction].x;
+//                 if(this.checkOffBoard(adjY, adjX)){
+//                     continue;
+//                 }
+//                 if(gameboardArray[adjY][adjX] === color){
+//                     this.checkFurther({y: adjY, x: adjX}, [{y: i, x: j}, {y: adjY, x: adjX}], direction, 2, color)
+//                 }
+//             }
+//         }
+//     }
+//     this.setState({
+//         gameboardArray: this.gameboardArrayCopy
+//     }, this.renderTiles())    
+// }
+// checkFurther = (toCheckCords, matchesArr, direction, count, color) => {
+//     const {gameboardArray} = this.state;
+//     let adjY = toCheckCords.y + this.directionCheck[direction].y;
+//     let adjX = toCheckCords.x + this.directionCheck[direction].x;
+//     if(this.checkOffBoard(adjY, adjX)){
+//         if (count > 2){
+//             for(let i = 0; i < matchesArr.length; i++){
+//                 this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
+//             }
+//         }  
+//         return;
+//     }
+//     if(gameboardArray[adjY][adjX] === color){
+//         matchesArr.push({y: adjY, x: adjX});
+//         this.checkFurther({y: adjY, x: adjX}, matchesArr, direction, ++count, color)
+//     } else {
+//         if (count < 3){
+//             return;
+//         }       
+//         for(let i = 0; i < matchesArr.length; i++){
+//             this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
+//         }
+//     }
+// }
