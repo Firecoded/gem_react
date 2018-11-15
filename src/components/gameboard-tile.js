@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import './gameboard-tile.css';
 
 class GameboardTile extends Component {
     constructor(props){
@@ -16,11 +16,18 @@ class GameboardTile extends Component {
                 'match': 'match'
             }
     }
+
+    tileClick = () => {
+        const {callBack, row, col} = this.props;
+        callBack({y: row, x: col})
+    }
   
     render() {
-        const {color} = this.props;
+        const {color, row, col, highlight} = this.props;
         return (
-            <div className = {`gameboard-tile ${this.gemColorRef[color]}`}>
+            <div y = {row} x = {col} 
+                 className = {`gameboard-tile ${this.gemColorRef[color]} ${highlight ? 'highlight' : ''}`} 
+                 onClick = {this.tileClick}>
                 
             </div>
         )

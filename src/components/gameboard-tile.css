@@ -1,0 +1,93 @@
+.gameboard-tile{
+    height: 12.5%;
+    width: 12.5%;
+    position: relative;
+    border: 1px solid goldenrod;
+    display: inline-block;
+}
+
+.red{
+    background-color: red;
+}
+.blue{
+    background-color: blue;
+}
+.green {
+    background-color:green;
+}
+.yellow {
+    background-color: yellow;
+}
+.brown {
+    background-color: rgb(77, 23, 23);
+}
+.purple {
+    background-color: purple;
+}
+.bomb {
+    background-color:black;
+}
+.match{
+    background-color: gray;
+}
+.click{
+    cursor: pointer;
+}
+.click1,
+.click2{
+    cursor: pointer;
+}
+.highlight{
+    border: 1px solid white;
+}
+.up {
+    animation: up .8s linear 0s 1;
+    top: -12.5%;
+}
+.down {
+    animation: down .8s linear 0s 1;
+    bottom: -12.5%;
+}
+.right {
+    animation: right .8s linear 0s 1;
+    right: -12.5%;
+}
+.left {
+    animation: left .8s linear 0s 1;
+    left: -12.5%;
+}
+
+/* ----------animations-----------------*/
+
+@keyframes up {
+    from {
+        top: 0%
+    }
+    to {
+        top: -12.5%
+    }
+}
+@keyframes down {
+    from {
+        bottom: 0%
+    }
+    to {
+        bottom: -12.5%
+    }
+}
+@keyframes right {
+    from {
+        right: 0%
+    }
+    to {
+        right: -12.5%
+    }
+}
+@keyframes left {
+    from {
+        left: 0%
+    }
+    to {
+        left: -12.5%
+    }
+}
