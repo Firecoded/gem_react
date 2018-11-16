@@ -73,6 +73,8 @@ class Gameboard extends Component {
     initGameboard = () => {
         this.renderTiles();
         this.checkForPossibleMatches();
+        this.filterForMultiMatch(this.matchesArray);
+        console.log(this.matchesArray)
     }
     checkOffBoard = (y, x) => {
         if(y < 0 || y > this.boardSize-1 || x < 0 || x > this.boardSize-1){
@@ -89,8 +91,6 @@ class Gameboard extends Component {
         }
         return gem;
     }
-
-    
     checkForPossibleMatches = () => {
         const {gameboardArray} = this.state;
         for(let i = 0; i<this.boardSize; i++){
@@ -108,12 +108,13 @@ class Gameboard extends Component {
                                             nearStart: {y: adjY, x: adjX}, 
                                             gemStartMatchDir: direction, 
                                             color: color, 
-                                            matches: {}})
+                                            matches: {},
+                                            multiMatch: false,
+                                            ref: null})
                 }
             }
         }
     }
-
     checkNearbyMatches = (dataObj) => {
         const {gameboardArray} = this.state;
         const {nearStart, gemStartMatchDir, color, matches} = dataObj;
@@ -143,10 +144,18 @@ class Gameboard extends Component {
                 let wasPushed = false;
                 for(let i = 0; i < matchArr.length; i++){
                     let dir = matchArr[i];
+                    if(!matches[dir]){
+                        continue;
+                    }
                     if(matches[dir].length > 1){
                         if(!wasPushed){
-                            if(matches[gemStartMatchDir] !== undefined && matches[gemStartMatchDir] < 2){
-                                delete matches[gemStartMatchDir]
+                            if(matches[gemStartMatchDir] !== undefined && matches[gemStartMatchDir].length < 2){
+                                delete matches[gemStartMatchDir];
+                            }
+                            if(matches[tShape1] !== undefined && matches[tShape1].length < 2){
+                                delete matches[tShape1];
+                            } else if (matches[tShape2] !== undefined && matches[tShape2].length < 2){
+                                delete matches[tShape2];
                             }
                             this.matchesArray.push(dataObj);
                             wasPushed = true;
@@ -156,7 +165,6 @@ class Gameboard extends Component {
             }   
         }
     }
-    
     checkFurther = (matches, addMatchDirection, color) => {
         const {gameboardArray} = this.state;
         let currentCord = matches[addMatchDirection][matches[addMatchDirection].length-1]
@@ -170,22 +178,91 @@ class Gameboard extends Component {
             this.checkFurther(matches, addMatchDirection, color)
         }
     }
+    filterForMultiMatch = (matchArr) => {
+        for(let i = 0; i<matchArr.length-1; i++){
+            for(let j = i+1; j < matchArr.length; j++){
+                let startIY = matchArr[i].start.y;
+                let startIX = matchArr[i].start.x
+                let startJY = matchArr[j].start.y;
+                let startJX = matchArr[j].start.x;
+                let nearStartIY = matchArr[i].nearStart.y;
+                let nearStartIX = matchArr[i].nearStart.x
+                let nearStartJY = matchArr[j].nearStart.y;
+                let nearStartJX = matchArr[j].nearStart.x;
+                if(startIY === nearStartJY && startIX === nearStartJX && startJY === nearStartIY && startJX === nearStartIX){
+                    matchArr[i].multiMatch = true;
+                    matchArr[i].ref = matchArr[j];
+                    matchArr.splice(j, 1);
+                    console.log('multiMatch')
+                }     
+            }
+        }
+    }
     handleTileClick = (cordObj) => {
         if(this.clickTracker.click1 !== undefined && this.clickTracker.click2 !== undefined){
             return;
         }
         if(this.clickTracker.click1 === undefined){
             this.clickTracker.click1 = cordObj;
-            console.log('click1', this.clickTracker.click1)
             this.renderTiles();
         } else {
             this.clickTracker.click2 = cordObj;
-            console.log('click2', this.clickTracker.click2)
             this.renderTiles();
-        }
-        
+            this.checkIfValidMove(this.clickTracker)
+        }    
     }
-    renderTiles = () => { 
+    checkIfValidMove(clickTracker){
+        const {click1, click2} = clickTracker;
+        this.clickTracker['match'] = {};
+        for(let i = 0; i < this.matchesArray.length; i++){
+            let current = this.matchesArray[i];
+            if(click1.y === current.start.y && click1.x === current.start.x && click2.y === current.nearStart.y && click2.x === current.nearStart.x){
+                this.clickTracker.match[i] = current;
+            } else if (click1.y === current.nearStart.y && click1.x === current.nearStart.x && click2.y === current.start.y && click2.x === current.start.x){
+                this.clickTracker.match[i] = current;
+            }
+        }
+        const matchIndexArr = Object.keys(this.clickTracker.match);
+        if(matchIndexArr.length > 0){
+            this.assignValuesToMatch(this.clickTracker.match, matchIndexArr);
+        } else {
+            this.resetClickTrackAndHighlight();
+        }
+    }
+    resetClickTrackAndHighlight = () =>{
+        setTimeout(()=>{
+            this.clickTracker = {};
+            this.renderTiles();
+        }, 300)
+    }
+    assignValuesToMatch = (matchTracker, matchIndexArr) => {
+        for(let i = 0; i < matchIndexArr.length; i++){
+            let current = matchTracker[matchIndexArr[i]];
+            if(current.multiMatch){
+                this.gameboardArrayCopy[current.start.y][current.start.x] = 'match';
+                this.gameboardArrayCopy[current.nearStart.y][current.nearStart.x] = 'match';
+            } else {
+                this.gameboardArrayCopy[current.start.y][current.start.x] = this.gameboardArrayCopy[current.nearStart.y][current.nearStart.x];
+                this.gameboardArrayCopy[current.nearStart.y][current.nearStart.x] = 'match';
+            }
+            for(let key in current.matches){
+                current.matches[key].map((item, index)=>{
+                    this.gameboardArrayCopy[item.y][item.x] = 'match';
+                })
+            }
+            if(current.ref){
+                for(let key in current.ref.matches){
+                    current.ref.matches[key].map((item, index)=>{
+                        this.gameboardArrayCopy[item.y][item.x] = 'match';
+                    })
+                }
+            }
+            this.renderTiles(true);
+            this.makeGemsFall();
+        }
+    }
+    
+    renderTiles = (boolean) => { // if boolean is true rebuild dom based off array copy, then set copy to state
         const {gameboardArray} = this.state;
         const {click1, click2} = this.clickTracker;
         let array = [];
@@ -198,7 +275,9 @@ class Gameboard extends Component {
                 if(click2 && click2.y === i && click2.x === j){
                     isHighlighted = true;
                 }
-                let domElement = <GameboardTile color = {gameboardArray[i][j]} 
+                let color;
+                boolean ? color = this.gameboardArrayCopy[i][j] : color = gameboardArray[i][j];
+                let domElement = <GameboardTile color = {color} 
                                                 row = {i} col = {j} 
                                                 key = {i+''+j}
                                                 highlight = {isHighlighted}
@@ -206,11 +285,19 @@ class Gameboard extends Component {
                 array.push(domElement);
             }
         }
-        this.setState({
-            domElementsArray: array
-        }, ()=>{
-            this.gameboardArrayCopy = gameboardArray;
-        })
+        if(boolean){
+            this.setState({
+                domElementsArray: array,
+                gameboardArray: this.gameboardArrayCopy
+            })
+        } else {
+            this.setState({
+                domElementsArray: array
+            }, ()=>{
+                this.gameboardArrayCopy = gameboardArray;
+            })
+        }
+        
     }
     render() {
         console.log(this.state.gameboardArray, this.matchesArray)
