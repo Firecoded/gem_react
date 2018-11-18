@@ -40,7 +40,9 @@ class Gameboard extends Component {
         }
         this.boardSize = 8;
         this.matchesArray = [];
-        this.clickTracker = {}
+        this.afterFallMatchArray = [];
+        this.clickTracker = {};
+        this.canIClick = true;
     }
     componentDidMount = () => {
       this.buildGameboardArray(this.boardSize);
@@ -74,7 +76,6 @@ class Gameboard extends Component {
         this.renderTiles();
         this.checkForPossibleMatches();
         this.filterForMultiMatch(this.matchesArray);
-        console.log(this.matchesArray)
     }
     checkOffBoard = (y, x) => {
         if(y < 0 || y > this.boardSize-1 || x < 0 || x > this.boardSize-1){
@@ -92,6 +93,7 @@ class Gameboard extends Component {
         return gem;
     }
     checkForPossibleMatches = () => {
+        this.matchesArray = [];
         const {gameboardArray} = this.state;
         for(let i = 0; i<this.boardSize; i++){
             for(let j = 0; j<this.boardSize; j ++){
@@ -197,8 +199,31 @@ class Gameboard extends Component {
                 }     
             }
         }
+        this.addMatchCount(matchArr);
+        this.canIClick = true;
+    }
+    addMatchCount = (matchArr) => { //creating match count to be passed to parent later
+        matchArr.map((item, index)=>{
+            let gemCount = 1;
+            let matchDirArr = Object.keys(item.matches);
+            for(let i = 0; i< matchDirArr.length; i++){
+                gemCount += item.matches[matchDirArr[i]].length;
+            }
+            matchArr[index]['matchCount'] = [{color: this.gemColorRef[item.color], count: gemCount}]
+            if(item.multiMatch){
+                let gemCount2 = 1;
+                let matchDirArr2 = Object.keys(item.ref.matches);
+                for(let i = 0; i< matchDirArr2.length; i++){
+                    gemCount2 += item.ref.matches[matchDirArr2[i]].length;
+                }
+                matchArr[index]['matchCount'].push({color: this.gemColorRef[item.ref.color], count: gemCount2})
+            }    
+        })
     }
     handleTileClick = (cordObj) => {
+        if(!this.canIClick){
+            return;
+        }
         if(this.clickTracker.click1 !== undefined && this.clickTracker.click2 !== undefined){
             return;
         }
@@ -208,10 +233,10 @@ class Gameboard extends Component {
         } else {
             this.clickTracker.click2 = cordObj;
             this.renderTiles();
-            this.checkIfValidMove(this.clickTracker)
+            this.checkIfValidClick(this.clickTracker)
         }    
     }
-    checkIfValidMove(clickTracker){
+    checkIfValidClick(clickTracker){
         const {click1, click2} = clickTracker;
         this.clickTracker['match'] = {};
         for(let i = 0; i < this.matchesArray.length; i++){
@@ -224,7 +249,9 @@ class Gameboard extends Component {
         }
         const matchIndexArr = Object.keys(this.clickTracker.match);
         if(matchIndexArr.length > 0){
+            this.canIClick = false;
             this.assignValuesToMatch(this.clickTracker.match, matchIndexArr);
+            this.passGemCountToParent(this.clickTracker.match[matchIndexArr])
         } else {
             this.resetClickTrackAndHighlight();
         }
@@ -232,10 +259,17 @@ class Gameboard extends Component {
     resetClickTrackAndHighlight = () =>{
         setTimeout(()=>{
             this.clickTracker = {};
+            this.canIClick = true;
             this.renderTiles();
         }, 300)
     }
-    assignValuesToMatch = (matchTracker, matchIndexArr) => {
+    passGemCountToParent = (match) => {
+        console.log('passedtoparent', match.matchCount)
+        for(let i = 0; i < match.matchCount.length; i++){
+            this.props.gemCountCallback(match.matchCount[i]);
+        }
+    }
+    assignValuesToMatch = (matchTracker, matchIndexArr) => { //gemstofall array not needed, clean up later
         let gemsToFallArr = [];
         for(let i = 0; i < matchIndexArr.length; i++){
             let current = matchTracker[matchIndexArr[i]];
@@ -249,14 +283,14 @@ class Gameboard extends Component {
                 gemsToFallArr.push(current.nearStart);
             }
             for(let key in current.matches){
-                current.matches[key].map((item, index)=>{
+                current.matches[key].map((item)=>{
                     this.gameboardArrayCopy[item.y][item.x] = 'match';
                     gemsToFallArr.push(item);
                 })
             }
             if(current.ref){
                 for(let key in current.ref.matches){
-                    current.ref.matches[key].map((item, index)=>{
+                    current.ref.matches[key].map((item)=>{
                         this.gameboardArrayCopy[item.y][item.x] = 'match';
                         gemsToFallArr.push(item);
                     })
@@ -264,14 +298,13 @@ class Gameboard extends Component {
             }
             setTimeout(()=>{
                 this.renderTiles(true)
-            }, 300)
+            }, 450)
         }
     }
     makeGemsFall = () => {   
         let noMore = true;
-        for(let i = 7; i > -1; i--){
-            for(let j = 7; j > -1; j--){
-                console.log('gemfall', this.gameboardArrayCopy[i][j])
+        for(let i = this.boardSize-1; i > -1; i--){
+            for(let j = this.boardSize-1; j > -1; j--){
                 if(this.gameboardArrayCopy[i][j] === 'match'){
                     noMore = false;
                     let upCordY = i + this.directionCheck.up.y;
@@ -288,12 +321,99 @@ class Gameboard extends Component {
         if(noMore){
             this.setState({
                 gameboardArray: this.gameboardArrayCopy
-            }, this.renderTiles)
+            }, ()=>{
+                this.renderTiles();
+                this.checkForMatchesAfterFall();
+            })
         } else {
             setTimeout(()=>{
                 this.renderTiles(true)
-            }, 500)
+            }, 450)
         }    
+    }
+    checkForMatchesAfterFall = () => {
+        let matchesFound = false;
+        const {gameboardArray} = this.state;
+        let dirArr = Object.keys(this.directionCheck);
+        for(let i = 0; i< this.boardSize; i++){
+            for(let j = 0; j< this.boardSize; j++){
+                for(let dirI = 0; dirI < dirArr.length; dirI++){
+                    let direction = dirArr[dirI];
+                    let color = gameboardArray[i][j];
+                    let nextY = i + this.directionCheck[direction].y;
+                    let nextX = j + this.directionCheck[direction].x;
+                    if(this.checkOffBoard(nextY, nextX)){
+                        continue;
+                    }
+                    if(gameboardArray[nextY][nextX] === color){
+                        let matches = {};
+                        matches[direction] = [{y: i, x: j, color: color}, {y: nextY, x: nextX, color: color}]
+                        this.checkFurtherAfterFall(matches, direction, color);
+                        if(matches[direction] !== undefined){
+                            matchesFound = true;
+                            this.afterFallMatchArray.push(matches)
+                            console.log('checkForMatchesAfterFall', matches, matches.length, color)
+                        }
+                    }
+                } 
+            }
+        }
+        if(matchesFound){
+            this.assignValuesAfterMatch(this.afterFallMatchArray);
+        } else {
+            this.afterFallMatchArray = [];
+            this.checkForPossibleMatches();
+            this.filterForMultiMatch(this.matchesArray);
+            this.clickTracker = {};
+        }
+    }
+    checkFurtherAfterFall = (matches, direction, color) => {
+        const {gameboardArray} = this.state;
+        let current = matches[direction][matches[direction].length-1];
+        let nextY = current.y + this.directionCheck[direction].y;
+        let nextX = current.x + this.directionCheck[direction].x;
+        if(this.checkOffBoard(nextY, nextX)){
+            if(matches[direction].length < 3){
+                delete matches[direction]
+            }
+            return;
+        }
+        if(gameboardArray[nextY][nextX] === color){
+            matches[direction].push({y: nextY, x: nextX, color: color})
+            this.checkFurtherAfterFall(matches, direction, color)
+        } else {
+            if(matches[direction].length < 3){
+                delete matches[direction]
+            }
+            return;
+        }
+    }
+    assignValuesAfterMatch = (matchArray) => {
+        matchArray.map((item, index) => {
+            let directionArr = Object.keys(item)
+            for(let dirI = 0; dirI < directionArr.length; dirI++){
+                let dir = directionArr[dirI]
+                for(let matchI = 0; matchI < item[dir].length; matchI++){
+                    let current = item[dir][matchI];
+                    this.gameboardArrayCopy[current.y][current.x] = 'match';
+                }
+            }
+        })
+        this.filterFallArrayPassToParent(this.afterFallMatchArray);
+        this.afterFallMatchArray = [];
+        this.renderTiles(true);
+    }
+    //{color: "bomb", count: 4}
+
+    // 0:
+    // down: (3) [{…}, {…}, {…}]
+   
+    // 1:
+    // up: (3) [{…}, {…}, {…}]
+    
+
+    filterFallArrayPassToParent = (fallArray) => {
+        console.log('filterFallArrayPassToParent', fallArray)
     }
     renderTiles = (boolean) => { // if boolean is true rebuild dom based off array copy, then set copy to state
         const {gameboardArray} = this.state;
@@ -302,10 +422,10 @@ class Gameboard extends Component {
         for(let i = 0; i<this.boardSize; i++){
             for(let j = 0; j<this.boardSize; j++){
                 let isHighlighted = false;
-                if(click1 && click1.y === i && click1.x === j){
+                if(click1 && click1.y === i && click1.x === j && this.canIClick){
                     isHighlighted = true;   
                 }
-                if(click2 && click2.y === i && click2.x === j){
+                if(click2 && click2.y === i && click2.x === j && this.canIClick){
                     isHighlighted = true;
                 }
                 let color;
@@ -323,7 +443,7 @@ class Gameboard extends Component {
                 domElementsArray: array,
                 gameboardArray: this.gameboardArrayCopy
             }, ()=>{
-                setTimeout(this.makeGemsFall(), 500)
+                setTimeout(this.makeGemsFall, 450)
             })
         } else {
             this.setState({
@@ -344,52 +464,3 @@ class Gameboard extends Component {
 }
 
 export default Gameboard;
-
-
-// preventMatchesOnBuild = () => {
-//     const {gameboardArray} = this.state;
-//     for(let i = 0; i<this.boardSize; i++){
-//         for(let j = 0; j<this.boardSize; j ++){
-//             let dirArr = Object.keys(this.directionCheck);
-//             let color = gameboardArray[i][j];
-//             for(let dirI = 0; dirI < dirArr.length; dirI++){
-//                 let direction = dirArr[dirI]
-//                 let adjY = i + this.directionCheck[direction].y;
-//                 let adjX = i + this.directionCheck[direction].x;
-//                 if(this.checkOffBoard(adjY, adjX)){
-//                     continue;
-//                 }
-//                 if(gameboardArray[adjY][adjX] === color){
-//                     this.checkFurther({y: adjY, x: adjX}, [{y: i, x: j}, {y: adjY, x: adjX}], direction, 2, color)
-//                 }
-//             }
-//         }
-//     }
-//     this.setState({
-//         gameboardArray: this.gameboardArrayCopy
-//     }, this.renderTiles())    
-// }
-// checkFurther = (toCheckCords, matchesArr, direction, count, color) => {
-//     const {gameboardArray} = this.state;
-//     let adjY = toCheckCords.y + this.directionCheck[direction].y;
-//     let adjX = toCheckCords.x + this.directionCheck[direction].x;
-//     if(this.checkOffBoard(adjY, adjX)){
-//         if (count > 2){
-//             for(let i = 0; i < matchesArr.length; i++){
-//                 this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
-//             }
-//         }  
-//         return;
-//     }
-//     if(gameboardArray[adjY][adjX] === color){
-//         matchesArr.push({y: adjY, x: adjX});
-//         this.checkFurther({y: adjY, x: adjX}, matchesArr, direction, ++count, color)
-//     } else {
-//         if (count < 3){
-//             return;
-//         }       
-//         for(let i = 0; i < matchesArr.length; i++){
-//             this.gameboardArrayCopy[matchesArr[i].y][matchesArr[i].x] = this.decideGem(color);
-//         }
-//     }
-// }
