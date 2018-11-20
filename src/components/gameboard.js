@@ -264,7 +264,7 @@ class Gameboard extends Component {
         }, 300)
     }
     passGemCountToParent = (match) => {
-        console.log('passedtoparent', match.matchCount)
+        console.log('passedtoparent', match.matchCount, match)
         for(let i = 0; i < match.matchCount.length; i++){
             this.props.gemCountCallback(match.matchCount[i]);
         }
@@ -412,8 +412,38 @@ class Gameboard extends Component {
     // up: (3) [{…}, {…}, {…}]
     
 
-    filterFallArrayPassToParent = (fallArray) => {
+    filterFallArrayPassToParent = (fallArray) => { // could use cleanup/optimize
         console.log('filterFallArrayPassToParent', fallArray)
+        let uniqueTracker = {};
+        for(let i = 0; i < fallArray.length; i++){
+            let current = fallArray[i];
+            let currentDirArr = Object.keys(current);
+            for(let dirArrI = 0; dirArrI < currentDirArr.length; dirArrI++){
+                current[currentDirArr[dirArrI]].map((item, index)=>{
+                    let id = ''+item.y + item.x;
+                    if(uniqueTracker[id] === undefined){
+                        uniqueTracker[id] = item;
+                    }
+                })
+            }
+        }
+        let uniqueTrackerKeys = Object.keys(uniqueTracker);
+        uniqueTracker['counts'] = {};
+        for(let i = 0; i < uniqueTrackerKeys.length; i++){
+            let current = uniqueTracker[uniqueTrackerKeys[i]];
+            if(uniqueTracker.counts[current.color] === undefined){
+                uniqueTracker.counts[current.color] = {color: this.gemColorRef[current.color], count: 1};
+            } else {
+                uniqueTracker.counts[current.color].count += 1;
+            }
+        }
+        let countsArr = Object.keys(uniqueTracker.counts);
+        let tempArr = []
+        for(let i = 0; i < countsArr.length; i++){
+            tempArr.push(uniqueTracker.counts[countsArr[i]])
+        }
+        console.log('filteredfallObj', uniqueTracker, tempArr)
+        this.passGemCountToParent({matchCount:tempArr})     
     }
     renderTiles = (boolean) => { // if boolean is true rebuild dom based off array copy, then set copy to state
         const {gameboardArray} = this.state;
