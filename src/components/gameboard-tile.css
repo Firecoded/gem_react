@@ -1,34 +1,70 @@
 .gameboard-tile{
-    height: 12.5%;
-    width: 12.5%;
+    height: 12%;
+    width: 12%;
+    margin: .25%;
     position: relative;
-    border: 1px solid goldenrod;
     display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
-
+.red, .blue, .green, .yellow, .brown, .purple{
+    border-width: 5px;
+    border-style: solid;
+    border-radius: 50%;
+}
 .red{
-    background-color: red;
+    background: #FF232F;
+    border-top-color: #7F1118;
+    border-left-color: #7F1118;
+    border-right-color: #FF6F78;
+    border-bottom-color: #FF6F78;
 }
 .blue{
-    background-color: blue;
+    background: blue;
+    border-top-color: #02006b;
+    border-left-color: #02006b;
+    border-right-color: #7d6fff;
+    border-bottom-color: #7d6fff;
 }
 .green {
-    background-color:green;
+    background:green;
+    border-top-color: #01470a;
+    border-left-color: #01470a;
+    border-right-color: #5b8f56;
+    border-bottom-color: #5b8f56;
 }
 .yellow {
-    background-color: yellow;
+    background: #FFED22;
+    border-top-color: #7F7611;
+    border-left-color: #7F7611;
+    border-right-color: #FFF7A1;
+    border-bottom-color: #FFF7A1;
 }
 .brown {
-    background-color: rgb(77, 23, 23);
+    background: rgb(88, 12, 12);
+    border-top-color: #3a0303;
+    border-left-color: #3a0303;
+    border-right-color: #552d2d;
+    border-bottom-color: #552d2d;
 }
 .purple {
     background-color: purple;
+    border-top-color: #38033a;
+    border-left-color: #38033a;
+    border-right-color: #583757;
+    border-bottom-color: #583757;
 }
 .bomb {
-    background-color:black;
+    background-image: url('../assets/images/ssbicon.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 .match{
-    background-color: gray;
+    background-image: url('../assets/images/boom.gif');
+    background-size: 100% 100%;
+    animation: pop .9s linear 0s 1;
+    opacity: 0;
 }
 .click{
     cursor: pointer;
@@ -38,7 +74,10 @@
     cursor: pointer;
 }
 .highlight{
-    border: 1px solid white;
+    border-top-color: #ececec;
+    border-left-color: #ececec;
+    border-right-color: #adadad;
+    border-bottom-color: #adadad;
 }
 .up {
     animation: up .8s linear 0s 1;
@@ -58,6 +97,15 @@
 }
 
 /* ----------animations-----------------*/
+
+@keyframes pop {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
 
 @keyframes up {
     from {
