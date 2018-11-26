@@ -78,7 +78,7 @@ import './gameui.css';
     }
     
     render() {
-        //console.log(this.playerDBCopy, this.state.team0)
+        console.log(this.state)
         
         return (
         <div className="main-cont">
@@ -88,7 +88,7 @@ import './gameui.css';
                     {this.state.team0DomElements}
                 </div>
                 <div className="gameboard">
-                    <Gameboard gemCountCallback = {this.updateGemCount}/>
+                    <Gameboard switchTurnsCallback = {this.switchTurns} gemCountCallback = {this.updateGemCount}/>
                 </div>
                 <div className="player2-cont">
                     {this.state.team1DomElements}

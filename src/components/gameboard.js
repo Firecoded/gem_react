@@ -263,11 +263,15 @@ class Gameboard extends Component {
             this.renderTiles();
         }, 300)
     }
+    // Callbacks
     passGemCountToParent = (match) => {
         console.log('passedtoparent', match.matchCount, match)
         for(let i = 0; i < match.matchCount.length; i++){
             this.props.gemCountCallback(match.matchCount[i]);
         }
+    }
+    switchTurnsInParent = () =>{
+        this.props.switchTurnsCallback();
     }
     assignValuesToMatch = (matchTracker, matchIndexArr) => { //gemstofall array not needed, clean up later
         let gemsToFallArr = [];
@@ -364,6 +368,7 @@ class Gameboard extends Component {
             this.afterFallMatchArray = [];
             this.checkForPossibleMatches();
             this.filterForMultiMatch(this.matchesArray);
+            this.switchTurnsInParent();
             this.clickTracker = {};
         }
     }
