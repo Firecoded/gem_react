@@ -21,6 +21,23 @@ body{
 .header-cont{
     height: 10%;
     width: 100%;
+    position: relative;
+}
+.left-icon svg, .right-icon svg{
+    height: 9vmin;
+    width: 6vmin;
+    color: black;
+}
+.left-icon, .right-icon{
+    position: absolute;
+    display: inline-block;
+    animation: bounce 1s ease-in-out 0s infinite;
+}
+.left-icon{
+    left: 8.5%;
+}
+.right-icon{
+    right: 7.5%;
 }
 .player1-cont,
 .player2-cont{
@@ -44,4 +61,26 @@ body{
     position: relative;
     border: 2px solid blue;
     display: inline-block;
+}
+.hidden{
+    display: none;
+}
+.appear{
+    animation: appear .3s linear 0s 1;
+}
+
+@keyframes appear {
+    from {opacity: 0}
+    tp {opacity: 1;}
+}
+@keyframes bounce{
+    0% {
+        bottom: 0%;
+    }
+    50% {
+        bottom: 8%;
+    }
+    100% {
+        bottom: 0%;
+    }
 }

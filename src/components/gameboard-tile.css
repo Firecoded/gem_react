@@ -8,7 +8,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
-.red, .blue, .green, .yellow, .brown, .purple{
+.red, .blue, .green, .yellow, .brown, .purple, .bomb{
     border-width: 5px;
     border-style: solid;
     border-radius: 50%;

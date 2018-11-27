@@ -302,7 +302,7 @@ class Gameboard extends Component {
             }
             setTimeout(()=>{
                 this.renderTiles(true)
-            }, 450)
+            }, 400)
         }
     }
     makeGemsFall = () => {   
@@ -332,7 +332,7 @@ class Gameboard extends Component {
         } else {
             setTimeout(()=>{
                 this.renderTiles(true)
-            }, 450)
+            }, 400)
         }    
     }
     checkForMatchesAfterFall = () => {
@@ -478,7 +478,7 @@ class Gameboard extends Component {
                 domElementsArray: array,
                 gameboardArray: this.gameboardArrayCopy
             }, ()=>{
-                setTimeout(this.makeGemsFall, 450)
+                setTimeout(this.makeGemsFall, 400)
             })
         } else {
             this.setState({

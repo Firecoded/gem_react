@@ -3,6 +3,7 @@ import Gameboard from './gameboard';
 import Player from './player';
 import playerDB from './playerDB';
 import './gameui.css';
+import {FaAngleDown} from 'react-icons/fa';
 
  class GameUI extends Component {
    constructor(props){
@@ -83,7 +84,14 @@ import './gameui.css';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
-                <div className="header-cont"></div>
+                <div className="header-cont">
+                    <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
+                        <FaAngleDown  large='true'/>
+                    </div>
+                    <div className = {`right-icon ${this.state.playerTurn === 1 ? 'appear' : 'hidden'}`}>
+                        <FaAngleDown  large='true'/>
+                    </div>
+                </div>
                 <div className="player1-cont">
                     {this.state.team0DomElements}
                 </div>
