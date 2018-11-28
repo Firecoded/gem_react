@@ -20,13 +20,12 @@ class Player extends Component {
         this.state = {
             styleObj:{}
         }
-        this.test = {'backgroundColor': 'color: rgba(244, 248, 3, 0.6)'}
     }
     
     componentDidMount = () => {
         this.playerImg = this.assignPlayerAvatar(this.props.playerInfo.avatar);
         this.setState({
-            styleObj: {
+                styleObj: {
             'backgroundImage': `url(${this.playerImg})`,
             'position': 'relative',
             'backgroundPosition': 'center',
@@ -54,9 +53,8 @@ class Player extends Component {
   
   
     render() {
-        const {currentPowerGemCount, powerGemCountMax, gemColor, gemsFull, avatar} = this.props.playerInfo;
+        const {currentPowerGemCount, powerGemCountMax, gemColor, gemsFull} = this.props.playerInfo;
         console.log(this.props.playerInfo)
-        
         return (
             <div className = {`player-cont ${gemsFull ? 'super-full': ''}`}>
                 <div style = {this.state.styleObj}></div>

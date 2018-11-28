@@ -1,0 +1,8 @@
+.character-select-cont{
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    position: absolute;
+    background-image: url('../assets/images/charselect.jpg');
+    background-size: 100% 100%; 
+}

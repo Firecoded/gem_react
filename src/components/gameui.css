@@ -17,6 +17,7 @@ body{
     left: 10%;
     top: 3%;
     border: 2px solid red;
+    overflow: hidden;
 }
 .header-cont{
     height: 10%;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Gameboard from './gameboard';
 import Player from './player';
+import CharacterSelect from './character-select';
 import playerDB from './playerDB';
 import './gameui.css';
 import {FaAngleDown} from 'react-icons/fa';
@@ -40,10 +41,10 @@ import {FaAngleDown} from 'react-icons/fa';
     addPlayersToDom = () => {
         let arr1 = [];
         let arr2 = [];
-        this.state.team0.map((item, index)=>{
+        this.state.team0.map((item)=>{
             arr1.push(<Player key = {this.returnRandNum()} playerInfo= {this.playerDB.data[item]}/>)
         })
-        this.state.team1.map((item, index)=>{
+        this.state.team1.map((item)=>{
             arr2.push(<Player key = {this.returnRandNum()} playerInfo= {this.playerDBCopy.data[item]}/>)
         })
         this.setState({
@@ -84,6 +85,7 @@ import {FaAngleDown} from 'react-icons/fa';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
+            <CharacterSelect/>
                 <div className="header-cont">
                     <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
                         <FaAngleDown  large='true'/>
