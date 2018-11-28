@@ -6,7 +6,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Thunder Jolt',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'pikachu',
             'gemsFull': false
         },
         'ness':{
@@ -15,7 +15,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'PK Fire',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'ness',
             'gemsFull': false
         },
         'kirby':{
@@ -24,7 +24,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Stone',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'kirby',
             'gemsFull': false
         },
         'luigi':{
@@ -33,7 +33,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Luigi Cyclone',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'luigi',
             'gemsFull': false
         },
         'mario':{
@@ -42,7 +42,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'FireBall',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'mario',
             'gemsFull': false
         },
         'donkeyKong':{
@@ -51,7 +51,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Hand Slap',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'donkeyKong',
             'gemsFull': false
         },
         'link':{
@@ -60,7 +60,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Bomb',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'link',
             'gemsFull': false
         },
         'samus':{
@@ -69,7 +69,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Grapple Beam',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'samus',
             'gemsFull': false
         },
         'captainFalcon':{
@@ -78,7 +78,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Falcon Punch',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'captainFalcon',
             'gemsFull': false
         },
         'yoshi':{
@@ -87,7 +87,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Lay Egg',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'yoshi',
             'gemsFull': false
         },
         'fox':{
@@ -96,7 +96,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Reflector',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'fox',
             'gemsFull': false
         },
         'jigglypuff':{
@@ -105,7 +105,7 @@ module.exports = {
             'currentPowerGemCount': 0,
             'powerAbility': 'Sing',
             'powerDesc' : '',
-            'imgLoc' : '',
+            'avatar' : 'jigglypuff',
             'gemsFull': false
         }
     }
