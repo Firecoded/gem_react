@@ -19,6 +19,7 @@ import {FaAngleDown} from 'react-icons/fa';
     //this.playerRef = {team0: 'team0DomElements', team1: 'team1DomElements'}
     this.playerDB = require('./playerDB.js')
     this.playerDBCopy = Object.assign({}, this.playerDB)
+    this.moreThen3Match = false;
    }
   
     componentDidMount = () => {
@@ -31,6 +32,10 @@ import {FaAngleDown} from 'react-icons/fa';
    }
     returnRandNum = () => Math.floor(Math.random() * 10000)
     switchTurns = () => {
+        if(this.moreThen3Match){
+            this.moreThen3Match = false;
+            return;
+        }
         let switcher = this.state.playerTurn;
         switcher = 1 - switcher;
         this.setState({
@@ -54,6 +59,9 @@ import {FaAngleDown} from 'react-icons/fa';
     }
     updateGemCount = (colorCountObj) =>{
         console.log('colorcountobj', colorCountObj)
+        if(colorCountObj.count > 3){
+            this.moreThen3Match = true;
+        }
         let currentTeam;
         let currentDomEl;
         if(this.state.playerTurn === 0){
@@ -85,7 +93,7 @@ import {FaAngleDown} from 'react-icons/fa';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
-            <CharacterSelect/>
+            {/* <CharacterSelect/> */}
                 <div className="header-cont">
                     <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
                         <FaAngleDown  large='true'/>
