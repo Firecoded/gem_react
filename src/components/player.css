@@ -25,5 +25,11 @@
 }
 
 .super-full{
-    background-color: rgba(244, 248, 3, 0.6);
+    animation: pulse 2s ease-in-out 0s infinite;
+}
+
+@keyframes pulse {
+    0% {border: 5px solid red;}
+    50% {border: 5px solid rgba(0, 0, 0, 0);}
+    100% {border: 5px solid red;}
 }

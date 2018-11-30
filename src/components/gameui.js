@@ -14,7 +14,8 @@ import {FaAngleDown} from 'react-icons/fa';
         team1: [],
         team0DomElements: [],
         team1DomElements: [],
-        playerTurn: 0
+        playerTurn: 0,
+        characterSelectScreen: false
     }
     //this.playerRef = {team0: 'team0DomElements', team1: 'team1DomElements'}
     this.playerDB = require('./playerDB.js')
@@ -24,7 +25,9 @@ import {FaAngleDown} from 'react-icons/fa';
   
     componentDidMount = () => {
         //character selection process
-
+        this.setState({
+            characterSelectScreen : true
+        })
         this.setState({
             team0: ['pikachu', 'ness', 'fox', 'samus'],
             team1: ['mario', 'luigi', 'kirby', 'jigglypuff']
@@ -86,6 +89,9 @@ import {FaAngleDown} from 'react-icons/fa';
         })
         this.addPlayersToDom();
     }
+    showHideCharSelect = () => {
+
+    }
     
     render() {
         console.log(this.state)
@@ -93,7 +99,7 @@ import {FaAngleDown} from 'react-icons/fa';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
-            {/* <CharacterSelect/> */}
+            {this.state.characterSelectScreen ? <CharacterSelect/> : ''}
                 <div className="header-cont">
                     <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
                         <FaAngleDown  large='true'/>
