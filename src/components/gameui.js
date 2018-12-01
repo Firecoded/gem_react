@@ -90,7 +90,9 @@ import {FaAngleDown} from 'react-icons/fa';
         this.addPlayersToDom();
     }
     showHideCharSelect = () => {
-
+        this.setState({
+            characterSelectScreen: !characterSelectScreen
+        })
     }
     
     render() {
@@ -99,7 +101,7 @@ import {FaAngleDown} from 'react-icons/fa';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
-            {this.state.characterSelectScreen ? <CharacterSelect/> : ''}
+            {this.state.characterSelectScreen ? <CharacterSelect showHideCallBack = {this.showHideCharSelect}/> : ''}
                 <div className="header-cont">
                     <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
                         <FaAngleDown  large='true'/>

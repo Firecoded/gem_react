@@ -6,3 +6,34 @@
     background-image: url('../assets/images/charselect.jpg');
     background-size: 100% 100%; 
 }
+.character-avatars-cont{
+    height: 44.4%;
+    width: 84.7%;
+    position: relative;
+    border: 1px solid red;
+    top: 18%;
+    left: 7.7%;
+}
+.character-select-avatar{
+    height: 50%;
+    width: 16.66%;
+    position: relative;
+    border: 1px solid blue;
+    display: inline-block;
+}
+.character-select-boxes-cont{
+    height: 34%;
+    width: 84.7%;
+    position: relative;
+    top: 19%;
+    left: 7.7%;
+    border: 1px solid green;
+}
+.box{
+    width: 25%;
+    height: 100%;
+    position: relative;
+    border: 1px solid red;
+    display: inline-block;
+    background: rgb(179, 176, 176, 0.5);
+}
