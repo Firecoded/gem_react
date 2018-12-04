@@ -37,3 +37,9 @@
     display: inline-block;
     background: rgb(179, 176, 176, 0.5);
 }
+.close-character-select-btn{
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    border: 1px solid red;
+}

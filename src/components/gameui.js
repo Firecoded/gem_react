@@ -28,11 +28,15 @@ import {FaAngleDown} from 'react-icons/fa';
         this.setState({
             characterSelectScreen : true
         })
+        
+   }
+
+    updateTeam0 = (teamArray) => {
         this.setState({
-            team0: ['pikachu', 'ness', 'fox', 'samus'],
+            team0: teamArray,
             team1: ['mario', 'luigi', 'kirby', 'jigglypuff']
         }, this.addPlayersToDom)
-   }
+    }
     returnRandNum = () => Math.floor(Math.random() * 10000)
     switchTurns = () => {
         if(this.moreThen3Match){
@@ -91,7 +95,7 @@ import {FaAngleDown} from 'react-icons/fa';
     }
     showHideCharSelect = () => {
         this.setState({
-            characterSelectScreen: !characterSelectScreen
+            characterSelectScreen: !this.state.characterSelectScreen
         })
     }
     
@@ -101,7 +105,10 @@ import {FaAngleDown} from 'react-icons/fa';
         return (
         <div className="main-cont">
             <div className="gameboard-cont">
-            {this.state.characterSelectScreen ? <CharacterSelect showHideCallBack = {this.showHideCharSelect}/> : ''}
+            {this.state.characterSelectScreen ? <CharacterSelect 
+                    playerDB = {this.playerDBCopy}
+                    updateTeamCallback = {this.updateTeam0} 
+                    showHideCallback = {this.showHideCharSelect}/> : ''}
                 <div className="header-cont">
                     <div className = {`left-icon ${this.state.playerTurn === 0 ? 'appear' : 'hidden'}`}>
                         <FaAngleDown  large='true'/>

@@ -1,0 +1,13 @@
+.ind-char-cont{
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+.ind-char-img{
+    height: 60%;
+    width: 60%;
+    left: 20%;
+    position: relative;
+    background-size: contain;
+    border: 1px solid blue;
+}

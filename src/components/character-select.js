@@ -1,19 +1,41 @@
 import React, { Component } from 'react';
+import IndividualCharacter from './individual-character';
 import './character-select.css';
 
 class CharacterSelect extends Component {
     constructor(props){
         super(props)
-
+        this.state = {
+            team0: []
+        }
+        
     }
 
     handleClick = (e) => {
-        console.log(e.target.getAttribute('name'))
+        let team0Copy = this.state.team0;
+        if(team0Copy.length < 4){
+            team0Copy.push(e.target.getAttribute('name'))
+        }
+        this.setState({
+            team0: team0Copy
+        })
+    }
+
+    updateTeamToParent = (teamArray) => {
+        this.props.updateTeamCallback(teamArray)
+    }
+    hideCharSelect = () => {
+        if(this.state.team0.length === 4){
+            this.updateTeamToParent(this.state.team0);
+            this.props.showHideCallback();
+        }
+        
     }
 
     render() {
         return (
             <div className = 'character-select-cont'>
+                <div className = "close-character-select-btn" onClick = {this.hideCharSelect}></div>
                 <div className = 'character-avatars-cont'>
                     <div className = 'character-select-avatar ' onClick = {this.handleClick} name = 'luigi'> </div>
                     <div className = 'character-select-avatar ' onClick = {this.handleClick} name = 'mario'> </div>
@@ -29,10 +51,10 @@ class CharacterSelect extends Component {
                     <div className = 'character-select-avatar ' onClick = {this.handleClick} name = 'jigglypuff'> </div>
                 </div>
                 <div className = "character-select-boxes-cont">
-                    <div className = "box box1"></div>
-                    <div className = "box box2"></div>
-                    <div className = "box box3"></div>
-                    <div className = "box box4"></div>
+                    <div className = "box box1"><IndividualCharacter playerDB = {this.props.playerDB} playerName = {this.state.team0[0]}/></div>
+                    <div className = "box box2"><IndividualCharacter playerDB = {this.props.playerDB} playerName = {this.state.team0[1]}/></div>
+                    <div className = "box box3"><IndividualCharacter playerDB = {this.props.playerDB} playerName = {this.state.team0[2]}/></div>
+                    <div className = "box box4"><IndividualCharacter playerDB = {this.props.playerDB} playerName = {this.state.team0[3]}/></div>
                 </div>
             </div>
         )
